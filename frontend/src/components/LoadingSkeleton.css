@@ -1,0 +1,43 @@
+.pb-skel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.pb-skel-line {
+  height: 12px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.04) 0%,
+    rgba(0, 0, 0, 0.08) 50%,
+    rgba(0, 0, 0, 0.04) 100%
+  );
+  background-size: 200% 100%;
+  animation: pb-skel-pulse 1.4s ease-in-out infinite;
+}
+
+.pb-skel-line:first-child {
+  width: 100%;
+}
+
+.pb-skel-line:nth-child(2) {
+  width: 90%;
+}
+
+.pb-skel-line:nth-child(3) {
+  width: 95%;
+}
+
+.pb-skel-line:nth-child(n + 4) {
+  width: 85%;
+}
+
+@keyframes pb-skel-pulse {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}

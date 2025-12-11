@@ -1,0 +1,70 @@
+.page--guide {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+}
+
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #2c3e50;
+}
+
+.page-subtitle {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.5;
+}
+
+.guide-section + .guide-section {
+  margin-top: 20px;
+}
+
+.guide-section h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #2c3e50;
+}
+
+.guide-section p,
+.guide-section li {
+  font-size: 0.85rem;
+  color: #444;
+  line-height: 1.5;
+}
+
+.guide-note {
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: #777;
+  font-style: italic;
+}
+
+.guide-section ul {
+  padding-left: 18px;
+  margin: 0;
+}
+
+.guide-section ol {
+  padding-left: 18px;
+  margin: 0;
+}
+
+.guide-section li {
+  margin-top: 4px;
+}
+
+.guide-section li:first-child {
+  margin-top: 0;
+}
+
+.guide-section strong {
+  color: #2c3e50;
+  font-weight: 600;
+}

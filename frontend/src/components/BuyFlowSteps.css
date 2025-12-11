@@ -1,0 +1,10 @@
+/* Completed step styling */
+.pb-step--completed .pb-step-number {
+  background: #10b981;
+  color: #ffffff;
+}
+
+.pb-step-checkmark {
+  font-size: 1rem;
+  line-height: 1;
+}
