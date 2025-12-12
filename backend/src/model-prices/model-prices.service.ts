@@ -17,9 +17,23 @@ export class ModelPricesService {
     return created.save();
   }
 
-  async findAll(activeOnly: boolean = false): Promise<ModelPrice[]> {
+  async findAll(
+    activeOnly: boolean = false,
+    limit?: number,
+    skip?: number,
+  ): Promise<ModelPrice[]> {
     const query = activeOnly ? { isActive: true } : {};
-    return this.modelPriceModel.find(query).exec();
+    const mongooseQuery = this.modelPriceModel.find(query);
+
+    // Apply skip and limit only when provided
+    if (skip !== undefined) {
+      mongooseQuery.skip(skip);
+    }
+    if (limit !== undefined) {
+      mongooseQuery.limit(limit);
+    }
+
+    return mongooseQuery.exec();
   }
 
   async findOne(id: string): Promise<ModelPrice> {

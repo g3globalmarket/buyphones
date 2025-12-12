@@ -25,8 +25,34 @@ export class ModelPricesController {
   }
 
   @Get()
-  findAll(@Query('activeOnly') activeOnly?: string) {
-    return this.modelPricesService.findAll(activeOnly === 'true');
+  findAll(
+    @Query('activeOnly') activeOnly?: string,
+    @Query('limit') limit?: string,
+    @Query('skip') skip?: string,
+  ) {
+    // Parse and validate limit (0-200, cap at 200)
+    let parsedLimit: number | undefined;
+    if (limit) {
+      const limitNum = parseInt(limit, 10);
+      if (!isNaN(limitNum) && limitNum >= 0) {
+        parsedLimit = Math.min(limitNum, 200); // Cap at 200
+      }
+    }
+
+    // Parse and validate skip (>= 0)
+    let parsedSkip: number | undefined;
+    if (skip) {
+      const skipNum = parseInt(skip, 10);
+      if (!isNaN(skipNum) && skipNum >= 0) {
+        parsedSkip = skipNum;
+      }
+    }
+
+    return this.modelPricesService.findAll(
+      activeOnly === 'true',
+      parsedLimit,
+      parsedSkip,
+    );
   }
 
   @Get(':id')
