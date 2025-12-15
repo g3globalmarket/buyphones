@@ -25,12 +25,37 @@ export const adminAuthApi = {
   /**
    * Login with email and password
    * Returns JWT token for admin authentication
+   * Backend returns 201 (Created) on successful login
    */
   async login(credentials: AdminLoginRequest): Promise<AdminLoginResponse> {
     const response = await axios.post<AdminLoginResponse>(
       `${API_BASE_URL}/admin/auth/login`,
-      credentials
+      credentials,
+      {
+        // Explicitly accept 201 (Created) as success
+        validateStatus: (status) => status >= 200 && status < 300,
+      }
     );
+
+    // Validate response structure
+    if (!response.data) {
+      throw new Error("Invalid response: missing data");
+    }
+
+    if (!response.data.accessToken) {
+      throw new Error("Invalid response: missing accessToken");
+    }
+
+    if (!response.data.admin) {
+      throw new Error("Invalid response: missing admin");
+    }
+
+    console.log("[AdminAuth] Login successful:", {
+      status: response.status,
+      hasToken: !!response.data.accessToken,
+      adminEmail: response.data.admin.email,
+    });
+
     return response.data;
   },
 };

@@ -4,6 +4,7 @@ import { ModelPrice, BuyRequest, BuyRequestStatus } from "../types";
 import { modelPricesApi } from "../api/modelPrices";
 import { buyRequestsApi } from "../api/buyRequests";
 import { adminAuth } from "../utils/adminAuth";
+import { getAdminAccessToken } from "../auth/adminAuthStorage";
 import { STATUS_LABELS } from "../constants/statusLabels";
 import PhotoModal from "../components/PhotoModal";
 import LoadingSkeleton from "../components/LoadingSkeleton";
@@ -70,6 +71,16 @@ const AdminDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
+  // Helper function to check admin authentication (legacy token OR JWT)
+  // Matches the logic in ProtectedAdminRoute
+  const isAdminAuthenticated = (): boolean => {
+    const legacyToken = adminAuth.getToken();
+    const hasLegacy = !!legacyToken && String(legacyToken).trim().length > 0;
+    const jwt = getAdminAccessToken();
+    const hasJwt = !!jwt && jwt.trim().length > 0;
+    return hasLegacy || hasJwt;
+  };
+
   // Debounce search query
   useEffect(() => {
     const handle = setTimeout(() => {
@@ -86,7 +97,7 @@ const AdminDashboard = () => {
 
   // Check authentication on mount - must be after all useState hooks
   useEffect(() => {
-    if (!adminAuth.isAuthenticated()) {
+    if (!isAdminAuthenticated()) {
       navigate("/admin", { replace: true });
       return;
     }
@@ -94,7 +105,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     // Only load data if authenticated
-    if (!adminAuth.isAuthenticated()) {
+    if (!isAdminAuthenticated()) {
       return;
     }
     if (activeTab === "prices") {
@@ -112,7 +123,7 @@ const AdminDashboard = () => {
 
   // Reload when page changes
   useEffect(() => {
-    if (adminAuth.isAuthenticated() && activeTab === "requests") {
+    if (isAdminAuthenticated() && activeTab === "requests") {
       loadBuyRequests();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -331,7 +342,7 @@ const AdminDashboard = () => {
   };
 
   // Don't render if not authenticated - must be after all hooks
-  if (!adminAuth.isAuthenticated()) {
+  if (!isAdminAuthenticated()) {
     return null;
   }
 

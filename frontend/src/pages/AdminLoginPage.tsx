@@ -24,17 +24,47 @@ const AdminLoginPage = () => {
     setLoading(true);
 
     try {
+      console.log("[AdminLoginPage] Attempting login for:", email);
       const response = await adminAuthApi.login({ email, password });
+
+      // Validate response structure
+      if (!response || !response.accessToken) {
+        throw new Error("Invalid response: missing accessToken");
+      }
+
+      if (!response.admin) {
+        throw new Error("Invalid response: missing admin data");
+      }
+
+      console.log("[AdminLoginPage] Login response received:", {
+        hasToken: !!response.accessToken,
+        adminId: response.admin.id,
+        adminEmail: response.admin.email,
+        adminRole: response.admin.role,
+      });
 
       // Store JWT token
       saveAdminAccessToken(response.accessToken);
+      console.log("[AdminLoginPage] Token saved to localStorage");
 
-      // TODO: Optionally store admin info globally if needed for future use
-      // For now, we just store the token
+      // Store admin info (optional, for future use)
+      if (response.admin) {
+        try {
+          localStorage.setItem("pb_admin_user", JSON.stringify(response.admin));
+        } catch (storageErr) {
+          console.warn(
+            "[AdminLoginPage] Failed to store admin info:",
+            storageErr
+          );
+          // Non-critical, continue with login
+        }
+      }
 
       // Navigate to admin dashboard
-      navigate("/admin/dashboard");
+      console.log("[AdminLoginPage] Redirecting to /admin/dashboard");
+      navigate("/admin/dashboard", { replace: true });
     } catch (err: unknown) {
+      console.error("[AdminLoginPage] Login error:", err);
       // Extract user-friendly error message
       const errorMessage = getErrorMessage(err);
       setError(
