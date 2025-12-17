@@ -13,7 +13,7 @@ import { Throttle } from '@nestjs/throttler';
 import { BuyRequestsService } from './buy-requests.service';
 import { CreateBuyRequestDto } from './dto/create-buy-request.dto';
 import { UpdateBuyRequestDto } from './dto/update-buy-request.dto';
-import { AdminTokenGuard } from '../common/guards/admin-token.guard';
+import { AdminAuthGuard } from '../common/guards/admin-auth.guard';
 import { ListBuyRequestsQueryDto } from './dto/list-buy-requests-query.dto';
 
 @Controller('buy-requests')
@@ -26,7 +26,7 @@ export class BuyRequestsController {
   }
 
   @Get()
-  @UseGuards(AdminTokenGuard)
+  @UseGuards(AdminAuthGuard)
   @Throttle({
     default: {
       limit: 100, // Higher limit for admin list operations
@@ -42,13 +42,13 @@ export class BuyRequestsController {
   }
 
   @Get(':id')
-  @UseGuards(AdminTokenGuard)
+  @UseGuards(AdminAuthGuard)
   findOne(@Param('id') id: string) {
     return this.buyRequestsService.findOne(id);
   }
 
   @Patch(':id')
-  @UseGuards(AdminTokenGuard)
+  @UseGuards(AdminAuthGuard)
   update(
     @Param('id') id: string,
     @Body() updateBuyRequestDto: UpdateBuyRequestDto,
@@ -57,13 +57,13 @@ export class BuyRequestsController {
   }
 
   @Delete(':id')
-  @UseGuards(AdminTokenGuard)
+  @UseGuards(AdminAuthGuard)
   remove(@Param('id') id: string) {
     return this.buyRequestsService.remove(id);
   }
 
   @Patch(':id/mark-paid')
-  @UseGuards(AdminTokenGuard)
+  @UseGuards(AdminAuthGuard)
   markPaid(@Param('id') id: string) {
     return this.buyRequestsService.markAsPaid(id);
   }
