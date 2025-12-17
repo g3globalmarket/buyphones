@@ -71,14 +71,34 @@ const AdminDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  // Helper function to check admin authentication (legacy token OR JWT)
+  // Helper function to check admin authentication (JWT prioritized, legacy as fallback)
   // Matches the logic in ProtectedAdminRoute
   const isAdminAuthenticated = (): boolean => {
-    const legacyToken = adminAuth.getToken();
-    const hasLegacy = !!legacyToken && String(legacyToken).trim().length > 0;
+    const currentUrl = window.location.pathname;
+
+    // Check JWT token first (prioritized)
     const jwt = getAdminAccessToken();
     const hasJwt = !!jwt && jwt.trim().length > 0;
-    return hasLegacy || hasJwt;
+
+    // Check legacy token as fallback
+    const legacyToken = adminAuth.getToken();
+    const hasLegacy = !!legacyToken && String(legacyToken).trim().length > 0;
+
+    const isAuthenticated = hasJwt || hasLegacy;
+
+    console.log("[AdminDashboard] Auth check:", {
+      url: currentUrl,
+      hasJWT: hasJwt,
+      hasLegacy: hasLegacy,
+      isAuthenticated,
+      tokenKey: hasJwt
+        ? "pb_admin_access_token (JWT)"
+        : hasLegacy
+        ? "admin_token (legacy)"
+        : "NONE",
+    });
+
+    return isAuthenticated;
   };
 
   // Debounce search query

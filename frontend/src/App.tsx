@@ -13,20 +13,37 @@ import { getAdminAccessToken } from "./auth/adminAuthStorage";
 import { useInactivityLogout } from "./hooks/useInactivityLogout";
 import "./App.css";
 
-// Protected route component - accepts both legacy token OR JWT
+// Protected route component - prioritizes JWT, falls back to legacy token
 const ProtectedAdminRoute = ({ children }: { children: React.ReactNode }) => {
-  // Check legacy token
-  const legacyToken = adminAuth.getToken();
-  const hasLegacy = !!legacyToken && String(legacyToken).trim().length > 0;
+  const currentUrl = window.location.pathname;
 
-  // Check JWT token
+  // Check JWT token first (prioritized)
   const jwt = getAdminAccessToken();
   const hasJwt = !!jwt && jwt.trim().length > 0;
 
-  // Admin is authenticated if either token exists
-  const isAuthenticated = hasLegacy || hasJwt;
+  // Check legacy token as fallback
+  const legacyToken = adminAuth.getToken();
+  const hasLegacy = !!legacyToken && String(legacyToken).trim().length > 0;
+
+  // Admin is authenticated if either token exists (JWT prioritized)
+  const isAuthenticated = hasJwt || hasLegacy;
+
+  console.log("[ProtectedAdminRoute] Auth check:", {
+    url: currentUrl,
+    hasJWT: hasJwt,
+    hasLegacy: hasLegacy,
+    isAuthenticated,
+    tokenKey: hasJwt
+      ? "pb_admin_access_token (JWT)"
+      : hasLegacy
+      ? "admin_token (legacy)"
+      : "NONE",
+  });
 
   if (!isAuthenticated) {
+    console.warn(
+      "[ProtectedAdminRoute] Not authenticated, redirecting to /admin"
+    );
     return <Navigate to="/admin" replace />;
   }
 
