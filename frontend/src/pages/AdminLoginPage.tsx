@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { adminAuthApi } from "../api/adminAuth";
 import { saveAdminAccessToken } from "../auth/adminAuthStorage";
 import { getErrorMessage } from "../api/errors";
-import { adminAuth } from "../utils/adminAuth";
 import "./AdminLoginPage.css";
 
 /**
@@ -48,12 +47,6 @@ const AdminLoginPage = () => {
       saveAdminAccessToken(response.accessToken);
       console.log(
         "[AdminLoginPage] JWT token saved to localStorage (pb_admin_access_token)"
-      );
-
-      // Clean up legacy admin_token to prevent conflicts
-      adminAuth.removeToken();
-      console.log(
-        "[AdminLoginPage] Legacy admin_token removed from localStorage"
       );
 
       // Store admin info

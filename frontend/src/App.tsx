@@ -8,39 +8,26 @@ import AdminUsersPage from "./pages/AdminUsersPage";
 import GuidePage from "./pages/GuidePage";
 import LoginPage from "./pages/LoginPage";
 import MyRequestsPage from "./pages/MyRequestsPage";
-import { adminAuth } from "./utils/adminAuth";
 import { getAdminAccessToken } from "./auth/adminAuthStorage";
 import { useInactivityLogout } from "./hooks/useInactivityLogout";
 import "./App.css";
 
-// Protected route component - prioritizes JWT, falls back to legacy token
+// Protected route component - JWT only
 const ProtectedAdminRoute = ({ children }: { children: React.ReactNode }) => {
   const currentUrl = window.location.pathname;
 
-  // Check JWT token first (prioritized)
+  // Check JWT token
   const jwt = getAdminAccessToken();
   const hasJwt = !!jwt && jwt.trim().length > 0;
-
-  // Check legacy token as fallback
-  const legacyToken = adminAuth.getToken();
-  const hasLegacy = !!legacyToken && String(legacyToken).trim().length > 0;
-
-  // Admin is authenticated if either token exists (JWT prioritized)
-  const isAuthenticated = hasJwt || hasLegacy;
 
   console.log("[ProtectedAdminRoute] Auth check:", {
     url: currentUrl,
     hasJWT: hasJwt,
-    hasLegacy: hasLegacy,
-    isAuthenticated,
-    tokenKey: hasJwt
-      ? "pb_admin_access_token (JWT)"
-      : hasLegacy
-      ? "admin_token (legacy)"
-      : "NONE",
+    isAuthenticated: hasJwt,
+    tokenKey: hasJwt ? "pb_admin_access_token (JWT)" : "NONE",
   });
 
-  if (!isAuthenticated) {
+  if (!hasJwt) {
     console.warn(
       "[ProtectedAdminRoute] Not authenticated, redirecting to /admin"
     );

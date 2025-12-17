@@ -3,8 +3,10 @@ import { useNavigate, Link } from "react-router-dom";
 import { ModelPrice, BuyRequest, BuyRequestStatus } from "../types";
 import { modelPricesApi } from "../api/modelPrices";
 import { buyRequestsApi } from "../api/buyRequests";
-import { adminAuth } from "../utils/adminAuth";
-import { getAdminAccessToken } from "../auth/adminAuthStorage";
+import {
+  getAdminAccessToken,
+  clearAdminAccessToken,
+} from "../auth/adminAuthStorage";
 import { STATUS_LABELS } from "../constants/statusLabels";
 import PhotoModal from "../components/PhotoModal";
 import LoadingSkeleton from "../components/LoadingSkeleton";
@@ -71,34 +73,23 @@ const AdminDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  // Helper function to check admin authentication (JWT prioritized, legacy as fallback)
+  // Helper function to check admin authentication (JWT only)
   // Matches the logic in ProtectedAdminRoute
   const isAdminAuthenticated = (): boolean => {
     const currentUrl = window.location.pathname;
 
-    // Check JWT token first (prioritized)
+    // Check JWT token
     const jwt = getAdminAccessToken();
     const hasJwt = !!jwt && jwt.trim().length > 0;
-
-    // Check legacy token as fallback
-    const legacyToken = adminAuth.getToken();
-    const hasLegacy = !!legacyToken && String(legacyToken).trim().length > 0;
-
-    const isAuthenticated = hasJwt || hasLegacy;
 
     console.log("[AdminDashboard] Auth check:", {
       url: currentUrl,
       hasJWT: hasJwt,
-      hasLegacy: hasLegacy,
-      isAuthenticated,
-      tokenKey: hasJwt
-        ? "pb_admin_access_token (JWT)"
-        : hasLegacy
-        ? "admin_token (legacy)"
-        : "NONE",
+      isAuthenticated: hasJwt,
+      tokenKey: hasJwt ? "pb_admin_access_token (JWT)" : "NONE",
     });
 
-    return isAuthenticated;
+    return hasJwt;
   };
 
   // Debounce search query
@@ -185,7 +176,8 @@ const AdminDashboard = () => {
       if (err.response?.status === 401) {
         setUnauthorizedError(true);
         setError("관리자 토큰이 유효하지 않습니다. 다시 로그인해주세요.");
-        adminAuth.removeToken();
+        clearAdminAccessToken();
+        localStorage.removeItem("pb_admin_user");
         const isDev = import.meta.env.DEV;
         if (isDev) {
           console.warn("[AdminDashboard] Unauthorized (401)");
@@ -635,7 +627,8 @@ const AdminDashboard = () => {
                 <button
                   className="app-btn-primary"
                   onClick={() => {
-                    adminAuth.removeToken();
+                    clearAdminAccessToken();
+                    localStorage.removeItem("pb_admin_user");
                     navigate("/admin", { replace: true });
                   }}
                 >

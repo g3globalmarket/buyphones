@@ -13,8 +13,8 @@ import { AuthModule } from '../auth/auth.module';
       { name: BuyRequest.name, schema: BuyRequestSchema },
     ]),
     ModelPricesModule,
-    AdminUsersModule, // Required for AdminAuthGuard (AdminUsersService)
-    AuthModule, // Provides shared JwtService for AdminAuthGuard
+    AdminUsersModule, // Required for AdminJwtAuthGuard (AdminUsersService)
+    AuthModule, // Provides shared JwtModule for AdminJwtAuthGuard
   ],
   controllers: [BuyRequestsController],
   providers: [BuyRequestsService],

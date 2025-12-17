@@ -1,5 +1,4 @@
 import axios from "axios";
-import { adminAuth } from "../utils/adminAuth";
 import {
   getAdminAccessToken,
   clearAdminAccessToken,
@@ -14,34 +13,7 @@ export const adminApiClient = axios.create({
   },
 });
 
-/**
- * Builds admin authentication headers prioritizing JWT over legacy token
- * - JWT token: Authorization Bearer header (primary method)
- * - Legacy token: X-Admin-Token header (fallback only if JWT is missing)
- */
-function buildAdminAuthHeaders(): Record<string, string> {
-  const headers: Record<string, string> = {};
-
-  // Prioritize JWT token (new method)
-  const jwt = getAdminAccessToken();
-  if (jwt && jwt.trim().length > 0) {
-    headers["Authorization"] = `Bearer ${jwt.trim()}`;
-    return headers; // JWT found, skip legacy token
-  }
-
-  // Fallback to legacy admin token only if JWT is not available
-  const legacyToken = adminAuth.getToken();
-  if (legacyToken) {
-    const trimmedToken = String(legacyToken).trim();
-    if (trimmedToken.length > 0) {
-      headers["x-admin-token"] = trimmedToken;
-    }
-  }
-
-  return headers;
-}
-
-// Add request interceptor to include admin authentication headers
+// Add request interceptor to include JWT authentication header
 adminApiClient.interceptors.request.use(
   (config) => {
     // Ensure headers object exists
@@ -49,35 +21,23 @@ adminApiClient.interceptors.request.use(
       config.headers = {} as any;
     }
 
-    // Build auth headers (JWT prioritized, legacy as fallback)
-    const authHeaders = buildAdminAuthHeaders();
+    // Get JWT token
+    const jwt = getAdminAccessToken();
 
     // Log for debugging
     const currentUrl = `${config.method?.toUpperCase()} ${config.url}`;
-    const tokenKey = getAdminAccessToken()
-      ? "pb_admin_access_token (JWT)"
-      : "admin_token (legacy)";
-    const authHeader =
-      authHeaders["Authorization"] || authHeaders["x-admin-token"]
-        ? "SET"
-        : "NONE";
+    const hasJWT = !!jwt && jwt.trim().length > 0;
 
     console.log("[AdminApiClient] Request:", {
       url: currentUrl,
-      tokenKey,
-      authHeader,
-      hasJWT: !!getAdminAccessToken(),
-      hasLegacy: !!adminAuth.getToken(),
+      tokenKey: "pb_admin_access_token (JWT)",
+      authHeader: hasJWT ? "SET" : "NONE",
+      hasJWT,
     });
 
-    // Set JWT Authorization header if available (prioritized)
-    if (authHeaders["Authorization"]) {
-      config.headers["Authorization"] = authHeaders["Authorization"];
-    }
-
-    // Set legacy admin token header only if JWT is not present
-    if (authHeaders["x-admin-token"]) {
-      config.headers["x-admin-token"] = authHeaders["x-admin-token"];
+    // Set JWT Authorization header
+    if (hasJWT) {
+      config.headers["Authorization"] = `Bearer ${jwt.trim()}`;
     }
 
     return config;
@@ -92,10 +52,14 @@ adminApiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      console.warn("[AdminApiClient] 401 Unauthorized - clearing tokens");
-      // Clear both JWT and legacy tokens on 401
+      console.warn("[AdminApiClient] 401 Unauthorized - clearing JWT token");
+      // Clear JWT token and admin user data
       clearAdminAccessToken();
-      adminAuth.removeToken();
+      try {
+        localStorage.removeItem("pb_admin_user");
+      } catch (e) {
+        // Ignore storage errors
+      }
       // Redirect to admin login
       window.location.href = "/admin";
     }

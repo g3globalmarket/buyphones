@@ -12,14 +12,14 @@ import {
 import { ModelPricesService } from './model-prices.service';
 import { CreateModelPriceDto } from './dto/create-model-price.dto';
 import { UpdateModelPriceDto } from './dto/update-model-price.dto';
-import { AdminTokenGuard } from '../common/guards/admin-token.guard';
+import { AdminJwtAuthGuard } from '../common/guards/admin-jwt-auth.guard';
 
 @Controller('model-prices')
 export class ModelPricesController {
   constructor(private readonly modelPricesService: ModelPricesService) {}
 
   @Post()
-  @UseGuards(AdminTokenGuard)
+  @UseGuards(AdminJwtAuthGuard)
   create(@Body() createModelPriceDto: CreateModelPriceDto) {
     return this.modelPricesService.create(createModelPriceDto);
   }
@@ -61,7 +61,7 @@ export class ModelPricesController {
   }
 
   @Patch(':id')
-  @UseGuards(AdminTokenGuard)
+  @UseGuards(AdminJwtAuthGuard)
   update(
     @Param('id') id: string,
     @Body() updateModelPriceDto: UpdateModelPriceDto,
@@ -70,7 +70,7 @@ export class ModelPricesController {
   }
 
   @Delete(':id')
-  @UseGuards(AdminTokenGuard)
+  @UseGuards(AdminJwtAuthGuard)
   remove(@Param('id') id: string) {
     return this.modelPricesService.remove(id);
   }

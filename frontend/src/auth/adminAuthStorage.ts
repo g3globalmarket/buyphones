@@ -2,10 +2,7 @@
  * Admin JWT token storage utility
  *
  * This module handles storage of admin JWT tokens (from /admin/auth/login).
- * It is separate from the legacy ADMIN_TOKEN storage in utils/adminAuth.ts.
- *
- * TODO: In a future task, we can wire this into admin API clients to use JWT
- * instead of X-Admin-Token header.
+ * JWT tokens are stored in localStorage and sent as Authorization: Bearer header.
  */
 
 const ADMIN_JWT_STORAGE_KEY = "pb_admin_access_token";
