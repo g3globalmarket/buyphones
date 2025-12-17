@@ -267,10 +267,10 @@ server {
         access_log off; # Don't log health checks
     }
 
-    # Uploads - Serve uploaded files
-    # Option 1: Proxy to backend (recommended for consistency)
-    location /uploads {
-        proxy_pass http://127.0.0.1:3000/uploads;
+    # Uploads - Proxy to backend (MUST be before location / to prevent SPA catch-all)
+    # This ensures /uploads/* requests are proxied to backend, not served as HTML
+    location ^~ /uploads/ {
+        proxy_pass http://127.0.0.1:3000;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -283,15 +283,7 @@ server {
         add_header Cache-Control "public, immutable";
     }
 
-    # Option 2: Serve directly from backend/uploads (if you prefer)
-    # location /uploads {
-    #     alias /var/www/buyphones/backend/uploads;
-    #     expires 1d;
-    #     add_header Cache-Control "public, immutable";
-    #     access_log off;
-    # }
-
-    # Frontend SPA - Serve React app
+    # Frontend SPA - Serve React app (catch-all, must be last)
     location / {
         try_files $uri $uri/ /index.html;
 
