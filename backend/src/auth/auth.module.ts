@@ -31,6 +31,6 @@ import { LoginCode, LoginCodeSchema } from './schemas/login-code.schema';
   ],
   controllers: [AuthController, AdminAuthController],
   providers: [AuthService, JwtStrategy, AdminJwtStrategy],
-  exports: [AuthService],
+  exports: [AuthService, JwtModule],
 })
 export class AuthModule {}
