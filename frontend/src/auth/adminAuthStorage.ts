@@ -1,39 +1,45 @@
 /**
  * Admin JWT token storage utility
  *
- * This module handles storage of admin JWT tokens (from /admin/auth/login).
- * JWT tokens are stored in localStorage and sent as Authorization: Bearer header.
+ * Stores admin JWT access token in localStorage under "pb_admin_access_token".
+ * This token is used by adminApiClient as: Authorization: Bearer <token>
  */
 
-const ADMIN_JWT_STORAGE_KEY = "pb_admin_access_token";
+const ADMIN_ACCESS_TOKEN_KEY = "pb_admin_access_token";
 
-export function saveAdminAccessToken(token: string): void {
+/** Save admin JWT access token */
+export function setAdminAccessToken(token: string): void {
   try {
-    localStorage.setItem(ADMIN_JWT_STORAGE_KEY, token);
+    const normalized = (token ?? "").trim();
+    if (!normalized) return;
+    localStorage.setItem(ADMIN_ACCESS_TOKEN_KEY, normalized);
   } catch {
-    // Ignore storage errors (e.g., quota exceeded, private browsing)
+    // ignore storage errors
   }
 }
 
+/** Read admin JWT access token */
 export function getAdminAccessToken(): string | null {
   try {
-    return localStorage.getItem(ADMIN_JWT_STORAGE_KEY);
+    const token = localStorage.getItem(ADMIN_ACCESS_TOKEN_KEY);
+    const normalized = (token ?? "").trim();
+    return normalized.length ? normalized : null;
   } catch {
     return null;
   }
 }
 
+/** Remove admin JWT access token */
 export function clearAdminAccessToken(): void {
   try {
-    localStorage.removeItem(ADMIN_JWT_STORAGE_KEY);
+    localStorage.removeItem(ADMIN_ACCESS_TOKEN_KEY);
   } catch {
-    // Ignore storage errors
+    // ignore storage errors
   }
 }
 
-/**
- * Check if admin JWT token exists
- */
+/** True if token exists */
 export function hasAdminAccessToken(): boolean {
   return !!getAdminAccessToken();
 }
+

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { adminAuthApi } from "../api/adminAuth";
-import { saveAdminAccessToken } from "../auth/adminAuthStorage";
+import { setAdminAccessToken } from "../auth/adminAuthStorage";
 import { getErrorMessage } from "../api/errors";
 import "./AdminLoginPage.css";
 
@@ -44,7 +44,7 @@ const AdminLoginPage = () => {
       });
 
       // Store JWT token
-      saveAdminAccessToken(response.accessToken);
+      setAdminAccessToken(response.accessToken);
       console.log(
         "[AdminLoginPage] JWT token saved to localStorage (pb_admin_access_token)"
       );
