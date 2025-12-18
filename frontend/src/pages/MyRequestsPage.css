@@ -725,3 +725,135 @@
 .pb-myreq-loading {
   padding: 2rem 1rem;
 }
+
+/* Shipping Info Block */
+.shipping-info-block {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.shipping-info-header {
+  margin-bottom: 0.75rem;
+}
+
+.shipping-info-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.shipping-info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.shipping-info-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.shipping-info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 150px;
+}
+
+.shipping-info-label {
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-weight: 500;
+  min-width: 50px;
+}
+
+.shipping-info-value {
+  font-size: 0.85rem;
+  color: #374151;
+  font-weight: 500;
+  flex: 1;
+}
+
+.shipping-info-address {
+  position: relative;
+  padding: 0.75rem;
+  background: #ffffff;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+}
+
+.shipping-info-address-line {
+  font-size: 0.85rem;
+  color: #374151;
+  line-height: 1.6;
+  margin-bottom: 0.25rem;
+}
+
+.shipping-info-address-line:last-child {
+  margin-bottom: 0;
+}
+
+.shipping-info-copy-btn {
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #374151;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-left: 0.5rem;
+}
+
+.shipping-info-copy-btn:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.shipping-info-copy-btn--address {
+  margin-top: 0.5rem;
+  margin-left: 0;
+  display: inline-block;
+}
+
+.shipping-info-note {
+  padding: 0.6rem 0.75rem;
+  background: #eff6ff;
+  border-radius: 6px;
+  border-left: 3px solid #3b82f6;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.shipping-info-note-label {
+  font-weight: 600;
+  color: #1e40af;
+  margin-right: 0.5rem;
+}
+
+.shipping-info-note-text {
+  color: #1e3a8a;
+}
+
+@media (max-width: 600px) {
+  .shipping-info-row {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .shipping-info-item {
+    min-width: 100%;
+  }
+
+  .shipping-info-copy-btn {
+    margin-left: auto;
+  }
+}

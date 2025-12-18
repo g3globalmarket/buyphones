@@ -94,6 +94,17 @@ ADMIN_TOKEN=<generate-strong-secret>
 # Rate limiting (optional, defaults shown)
 THROTTLE_TTL=60
 THROTTLE_LIMIT=20
+
+# Shipping Address (snapshot stored when request is approved)
+# Required fields:
+SHIP_TO_RECIPIENT_NAME=수령인 이름
+SHIP_TO_PHONE=010-1234-5678
+SHIP_TO_ADDRESS1=서울시 강남구 테헤란로 123
+
+# Optional fields:
+SHIP_TO_POSTAL_CODE=06234
+SHIP_TO_ADDRESS2=456호
+SHIP_TO_NOTE=택배함에 보관해주세요
 ```
 
 **Generate secrets:**

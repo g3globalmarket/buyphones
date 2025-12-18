@@ -109,6 +109,26 @@ export class BuyRequest {
   cancelledBy?: string; // 'user' | 'admin' | admin email
 
   @Prop({
+    type: {
+      recipientName: { type: String, required: true },
+      phone: { type: String, required: true },
+      postalCode: { type: String },
+      address1: { type: String, required: true },
+      address2: { type: String },
+      note: { type: String },
+    },
+    required: false,
+  })
+  shippingInfo?: {
+    recipientName: string;
+    phone: string;
+    postalCode?: string;
+    address1: string;
+    address2?: string;
+    note?: string;
+  };
+
+  @Prop({
     type: [
       {
         status: {

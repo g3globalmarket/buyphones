@@ -478,6 +478,109 @@ const MyRequestsPage = () => {
                         <div className="my-requests-step-label">입금 완료</div>
                       </div>
                     </div>
+
+                    {/* Shipping Address Block - Show after approval */}
+                    {isApproved && request.shippingInfo
+                      ? (() => {
+                          const shippingInfo = request.shippingInfo;
+                          return (
+                            <div className="shipping-info-block">
+                              <div className="shipping-info-header">
+                                <h3 className="shipping-info-title">
+                                  배송 주소 (기기 발송지)
+                                </h3>
+                              </div>
+                              <div className="shipping-info-content">
+                                <div className="shipping-info-row">
+                                  <div className="shipping-info-item">
+                                    <span className="shipping-info-label">
+                                      수령인
+                                    </span>
+                                    <span className="shipping-info-value">
+                                      {shippingInfo.recipientName}
+                                    </span>
+                                  </div>
+                                  <div className="shipping-info-item">
+                                    <span className="shipping-info-label">
+                                      연락처
+                                    </span>
+                                    <span className="shipping-info-value">
+                                      {shippingInfo.phone}
+                                    </span>
+                                    <button
+                                      type="button"
+                                      className="shipping-info-copy-btn"
+                                      onClick={async () => {
+                                        try {
+                                          await navigator.clipboard.writeText(
+                                            shippingInfo.phone
+                                          );
+                                          alert("연락처가 복사되었습니다.");
+                                        } catch (err) {
+                                          console.error("Failed to copy:", err);
+                                          alert("복사에 실패했습니다.");
+                                        }
+                                      }}
+                                      title="연락처 복사"
+                                    >
+                                      복사
+                                    </button>
+                                  </div>
+                                </div>
+                                <div className="shipping-info-address">
+                                  <div className="shipping-info-address-line">
+                                    {shippingInfo.postalCode && (
+                                      <span>[{shippingInfo.postalCode}] </span>
+                                    )}
+                                    {shippingInfo.address1}
+                                  </div>
+                                  {shippingInfo.address2 && (
+                                    <div className="shipping-info-address-line">
+                                      {shippingInfo.address2}
+                                    </div>
+                                  )}
+                                  <button
+                                    type="button"
+                                    className="shipping-info-copy-btn shipping-info-copy-btn--address"
+                                    onClick={async () => {
+                                      try {
+                                        const fullAddress = [
+                                          shippingInfo.postalCode &&
+                                            `[${shippingInfo.postalCode}]`,
+                                          shippingInfo.address1,
+                                          shippingInfo.address2,
+                                        ]
+                                          .filter(Boolean)
+                                          .join(" ");
+                                        await navigator.clipboard.writeText(
+                                          fullAddress
+                                        );
+                                        alert("주소가 복사되었습니다.");
+                                      } catch (err) {
+                                        console.error("Failed to copy:", err);
+                                        alert("복사에 실패했습니다.");
+                                      }
+                                    }}
+                                    title="주소 복사"
+                                  >
+                                    주소 복사
+                                  </button>
+                                </div>
+                                {shippingInfo.note && (
+                                  <div className="shipping-info-note">
+                                    <span className="shipping-info-note-label">
+                                      안내사항:
+                                    </span>
+                                    <span className="shipping-info-note-text">
+                                      {shippingInfo.note}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })()
+                      : null}
                   </div>
 
                   <div className="card-details-toggle">

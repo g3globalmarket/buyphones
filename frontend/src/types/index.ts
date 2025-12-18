@@ -27,6 +27,15 @@ export interface BuyRequestStatusHistoryEntry {
   changedBy?: string; // 'user' | 'admin' | admin email
 }
 
+export interface ShippingInfo {
+  recipientName: string;
+  phone: string;
+  postalCode?: string;
+  address1: string;
+  address2?: string;
+  note?: string;
+}
+
 export interface BuyRequest {
   _id: string;
   customerName: string;
@@ -54,6 +63,7 @@ export interface BuyRequest {
   shippingTrackingCode?: string;
   shippingTrackingUrl?: string;
   shippingSubmittedAt?: string;
+  shippingInfo?: ShippingInfo;
   approvedAt?: string;
   paidAt?: string;
   cancelledAt?: string;

@@ -17,6 +17,7 @@ import { UpdateMyRequestDto } from '../me/dto/update-my-request.dto';
 import { ModelPricesService } from '../model-prices/model-prices.service';
 import { PaginatedResult } from '../common/dto/paginated-result.dto';
 import { AppLoggerService } from '../common/logger/app-logger.service';
+import { getShippingInfo } from '../common/config/shipping.config';
 
 @Injectable()
 export class BuyRequestsService {
@@ -217,6 +218,22 @@ export class BuyRequestsService {
         }
         request.statusHistory[request.statusHistory.length - 1].changedBy =
           'admin';
+
+        // Store shipping info snapshot when request is approved
+        // This ensures the address is preserved even if env vars change later
+        const shippingInfo = getShippingInfo();
+        if (shippingInfo && !request.shippingInfo) {
+          request.shippingInfo = shippingInfo;
+          this.logger.logWithReq(
+            { requestId: 'system' },
+            `Shipping info snapshot stored for request ${id}`,
+          );
+        } else if (!shippingInfo) {
+          this.logger.warnWithReq(
+            { requestId: 'system' },
+            `Shipping info env vars not configured, skipping snapshot for request ${id}`,
+          );
+        }
       } else if (newStatus === 'paid' && !request.paidAt) {
         request.paidAt = now;
         request.statusHistory[request.statusHistory.length - 1].changedBy =
